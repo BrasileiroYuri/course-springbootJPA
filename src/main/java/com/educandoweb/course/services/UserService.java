@@ -12,6 +12,7 @@ import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
+import com.educandoweb.course.services.exceptions.UpdateException;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -46,25 +47,27 @@ public class UserService {
 			throw new ResourceNotFoundException(id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException(e.getMessage());
-		} 
+		}
 	}
 
 	public User update(Long id, User obj) {
 		try {
-			
-		
-		User entity = repository.getReferenceById(id);
-		updateData(entity, obj);
-		return repository.save(entity);
-		} catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException(id);
-		}
-	}
 
+			User entity = repository.getReferenceById(id);
+			updateData(entity, obj);
+			return repository.save(entity);
+		} catch (EntityNotFoundException e) {
+			throw new UpdateException(e.getMessage());
+		}
+		
+		
+	}
 	private void updateData(User entity, User obj) {
 		entity.setName(obj.getName());
 		entity.setEmail(obj.getEmail());
 		entity.setPhone(obj.getPhone());
 
 	}
+
+	
 }

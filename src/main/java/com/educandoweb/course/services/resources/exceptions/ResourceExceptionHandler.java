@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
+import com.educandoweb.course.services.exceptions.UpdateException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice // Esse objeto vai tratar possíveis exceções
 public class ResourceExceptionHandler {
 
-	@ExceptionHandler(ResourceNotFoundException.class) // esse objeto trata a exceção rnf.
+	@ExceptionHandler(ResourceNotFoundException.class) 
 	public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 		String error = "Resource not found.";
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -24,7 +25,8 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 
 	}
-	@ExceptionHandler(DatabaseException.class) // esse objeto trata a exceção rnf.
+
+	@ExceptionHandler(DatabaseException.class) 
 	public ResponseEntity<StandardError> DatabaseException(DatabaseException e, HttpServletRequest request) {
 		String error = "Database error";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -32,5 +34,13 @@ public class ResourceExceptionHandler {
 				request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
-	
+
+	@ExceptionHandler(UpdateException.class)
+	public ResponseEntity<StandardError> UpdateNotDone(UpdateException e, HttpServletRequest request) {
+		String error = "Update not done";
+		HttpStatus status = HttpStatus.EXPECTATION_FAILED;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(),
+				request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 }
